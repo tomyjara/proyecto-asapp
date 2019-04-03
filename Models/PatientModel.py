@@ -1,23 +1,20 @@
 from marshmallow import fields, Schema
-import datetime
 from .base import db
 
 
 class PatientModel(db.Model):
     """
-    User Model
+    Patient Model
     """
-
-    # table name
 
     __tablename__ = 'patients'
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True)
+    patient_name = db.Column(db.String(80), unique=True)
     email = db.Column(db.String(120), unique=True)
 
     def __init__(self, data):
-        self.username = data['username']
+        self.patient_name = data['patient_name']
         self.email = data['email']
 
     def save(self):
@@ -34,11 +31,11 @@ class PatientModel(db.Model):
         db.session.commit()
 
     @staticmethod
-    def get_all_users():
+    def get_all_patients():
         return PatientModel.query.all()
 
     @staticmethod
-    def get_one_user(id):
+    def get_one_patient(id):
         return PatientModel.query.get(id)
 
     def __repr(self):
@@ -47,8 +44,9 @@ class PatientModel(db.Model):
 
 class PatientSchema(Schema):
     """
-  User Schema
-  """
+    Patient Schema
+    """
+
     id = fields.Int(dump_only=True)
-    username = fields.Str(required=True)
+    patient_name = fields.Str(required=True)
     email = fields.Email(required=True)

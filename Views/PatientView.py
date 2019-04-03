@@ -1,38 +1,65 @@
 from flask import request, json, Response, Blueprint
 from Models.PatientModel import PatientModel, PatientSchema
 
-user_api = Blueprint('users', __name__)
-user_schema = PatientSchema()
+patient_api = Blueprint('patients', __name__)
+patient_schema = PatientSchema()
 
-@user_api.route('/create', methods=['POST'])
+
+@patient_api.route('', methods=['POST'])
 def create():
     """
-    Create User Function
+    Create Patient Function
     """
     req_data = request.get_json()
-    data, error = user_schema.load(req_data)
-    body = request.json
+    data, error = patient_schema.load(req_data)
     if error:
         return custom_response(error, 400)
 
-    # check if user already exist in the db
-    # user_in_db = PatientModel.get_user_by_email(data.get('email'))
-    # if user_in_db:
+    #user_in_db = PatientModel.get_user_by_email(data.get('email'))
+    #if user_in_db:
     #    message = {'error': 'User already exist, please supply another email address'}
     #    return custom_response(message, 400)
 
-    user = PatientModel(data)
-    user.save()
+    patient = PatientModel(data)
+    patient.save()
 
-    user_data = user_schema.dump(user).data
+    patient_data = patient_schema.dump(patient).data
 
-    return custom_response(user_data, 200)
+    return custom_response(patient_data, 200)
 
 
-@user_api.route('/', methods=['GET'])
+@patient_api.route('', methods=['GET'])
 def get_all():
-    users = PatientModel.get_all_users()
-    ser_users = user_schema.dump(users, many=True).data
+    patients = PatientModel.get_all_patients()
+    ser_users = patient_schema.dump(patients, many=True).data
+    return custom_response(ser_users, 200)
+
+
+@patient_api.route('/<id>', methods=['GET'])
+def get(id):
+    patient = PatientModel.get_one_patient(id)
+    ser_users = patient_schema.dump(patient).data
+    return custom_response(ser_users, 200)
+
+
+@patient_api.route('/<id>', methods=['DELETE'])
+def delete(id):
+    user = PatientModel.get_one_patient(id)
+    ser_users = patient_schema.dump(user).data
+    user.delete()
+    return custom_response(ser_users, 200)
+
+
+@patient_api.route('/<id>', methods=['PUT'])
+def put(id):
+    req_data = request.get_json()
+    data, error = patient_schema.load(req_data)
+
+    user = PatientModel.get_one_patient(id)
+    user.update(data)
+
+    ser_users = patient_schema.dump(user).data
+
     return custom_response(ser_users, 200)
 
 
