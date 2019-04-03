@@ -1,0 +1,6 @@
+flask
+flask_sqlalchemy
+flask_marshmallow
+sqlalchemy_utils
+flask_migrate
+flask_script
